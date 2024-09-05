@@ -1,0 +1,29 @@
+package Marioboy;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+
+public class Objeto {
+    int x, y, ancho, alto;
+    Color color;
+
+    public Objeto(int x, int y, int ancho, int alto, Color color) {
+        this.x = x;
+        this.y = y;
+        this.ancho = ancho;
+        this.alto = alto;
+        this.color = color;
+    }
+
+    public void dibujar(Graphics2D g2d) {
+        g2d.setColor(color);
+        g2d.fillRect(x, y, ancho, alto);
+    }
+
+    public boolean colisiona(int jugadorX, int jugadorY, int jugadorAncho, int jugadorAlto) {
+        return jugadorX < x + ancho &&
+               jugadorX + jugadorAncho > x &&
+               jugadorY < y + alto &&
+               jugadorY + jugadorAlto > y;
+    }
+}
