@@ -1,0 +1,280 @@
+package marioboy;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
+import java.util.ArrayList;
+import java.util.List;
+
+public class marioboy extends JFrame {
+
+    private JPanel contentPane;
+    private GamePanel gamePanel;
+
+    // PROPIEDADES DEL PJ
+    int pj_x = 40; // UBICACION INICIO X
+    int pj_y = 560; // UBICACION INICIO Y
+    int pj_ancho = 20;
+    int pj_alto = 40;
+    int ypiso = 560; // ubicacion del piso
+    boolean wPressed = false, spacePressed = false, sPressed = false, aPressed = false, dPressed = false;
+    int velMov = 5;
+    
+    boolean jumping = false;
+    boolean onGround = true;
+    int jumpHeight = 120; // Altura del salto
+    int fallSpeed = 12; // Velocidad de caída
+    int subirSpeed = 12;
+    int jumpStartY; // Y inicial del salto
+    boolean hasDashed = false;
+
+    // Temporizador para actualizar el movimiento del jugador
+    Timer timer;
+    
+    private List<Objeto> objetos;
+
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    marioboy frame = new marioboy();
+                    frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public marioboy() {
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(10, 10, 1000, 700);
+        setResizable(false);
+        gamePanel = new GamePanel();
+        gamePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        gamePanel.setLayout(new BorderLayout(0, 0));
+        setContentPane(gamePanel);
+
+        // Inicializar la lista de objetos
+        objetos = new ArrayList<>();
+        objetos.add(new Objeto(300, ypiso - 40, 100, 40, Color.RED)); // Primer objeto
+        objetos.add(new Objeto(500, ypiso - 60, 150, 50, Color.GREEN)); // Segundo objeto
+        objetos.add(new ObjetoMovil(700, ypiso - 40, 100, 40, Color.BLUE, 3)); // Primer objeto móvil
+        objetos.add(new ObjetoMovil(900, ypiso - 60, 150, 50, Color.YELLOW, 2)); // Segundo objeto móvil
+
+        // Temporizador
+        timer = new Timer(16, new ActionListener() { // Aproximadamente 60 FPS
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gamePanel.actionPerformed(e);
+                repaint();
+            }
+        });
+        timer.start();
+
+        // KeyListener
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int key = e.getKeyCode();
+                if (key == KeyEvent.VK_SPACE) {
+                    spacePressed = true;
+                    startJump();
+                }
+                if (key == KeyEvent.VK_S) {
+                    sPressed = true;
+                }
+                if (key == KeyEvent.VK_A) {
+                    aPressed = true;
+                }
+                if (key == KeyEvent.VK_D) {
+                    dPressed = true;
+                }
+                if (key == KeyEvent.VK_N) {
+                    dash();
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                int key = e.getKeyCode();
+                if (key == KeyEvent.VK_SPACE) {
+                    spacePressed = false;
+                }
+                if (key == KeyEvent.VK_S) {
+                    sPressed = false;
+                }
+                if (key == KeyEvent.VK_A) {
+                    aPressed = false;
+                }
+                if (key == KeyEvent.VK_D) {
+                    dPressed = false;
+                }
+            }
+        });
+        setFocusable(true);
+    }
+
+    private void startJump() {
+        if (onGround && !jumping) {
+            jumping = true;
+            onGround = false;
+            jumpStartY = pj_y;
+        }
+    }
+
+    private void dash() {
+        int dashDistance = 100; // Distancia del dash
+
+        if (onGround) {
+            performDash(dashDistance);
+            hasDashed = false; // Restablecer la capacidad de hacer dash cuando esté en el piso
+        } else if (!hasDashed) { // Si está en el aire, permite el dash solo una vez
+            performDash(dashDistance);
+            hasDashed = true; // Marca que ya ha hecho un dash en el aire
+        }
+    }
+
+    private void performDash(int dashDistance) {
+        if (wPressed && dPressed) { // Dash en diagonal derecha arriba
+            if (pj_x + dashDistance <= getWidth() - pj_ancho && pj_y - dashDistance >= 0) {
+                pj_x += dashDistance;
+                pj_y -= dashDistance;
+            }
+        } else if (wPressed && aPressed) { // Dash en diagonal izquierda arriba
+            if (pj_x - dashDistance >= 0 && pj_y - dashDistance >= 0) {
+                pj_x -= dashDistance;
+                pj_y -= dashDistance;
+            }
+        } else if (dPressed) { // Dash a la derecha
+            if (pj_x + dashDistance <= getWidth() - pj_ancho) {
+                pj_x += dashDistance;
+            }
+        } else if (aPressed) { // Dash a la izquierda
+            if (pj_x - dashDistance >= 0) {
+                pj_x -= dashDistance;
+            }
+        } else if (wPressed) { // Dash hacia arriba
+            if (pj_y - dashDistance >= 0) {
+                pj_y -= dashDistance;
+            }
+        }
+        if (!onGround) {
+            jumping = true; // Asegura que el estado de salto sea verdadero después de un dash en el aire
+        }
+    }
+
+    class GamePanel extends JPanel {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+
+            // Dibujar jugador
+            if (onGround) {
+                dibujarObjeto(g2d, pj_x, pj_y, pj_ancho, pj_alto, Color.CYAN);
+            } else {
+                dibujarObjeto(g2d, pj_x, pj_y, pj_ancho, pj_alto, Color.BLUE);
+            }
+            
+            // Dibujar el piso
+            int piso_ancho = getWidth();
+            int piso_alto = 200;
+            dibujarObjeto(g2d, 0, ypiso + 40, piso_ancho, piso_alto, Color.RED);
+
+            // Dibujar objetos del escenario
+            for (Objeto objeto : objetos) {
+                objeto.dibujar(g2d);
+                if (objeto instanceof ObjetoMovil) {
+                    ((ObjetoMovil) objeto).mover(); // Mover los objetos móviles
+                }
+            }
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            int futuroPJ_x = pj_x; // Posiciones futuras del jugador
+            int futuroPJ_y = pj_y;
+
+            // Movimiento horizontal
+            if (dPressed && pj_x <= getWidth() - pj_ancho) {
+                futuroPJ_x += velMov;
+            }
+            if (aPressed && pj_x >= 0) {
+                futuroPJ_x -= velMov;
+            }
+
+            // Verificar colisión en X con todos los objetos
+            boolean colisionaEnX = false;
+            for (Objeto objeto : objetos) {
+                if (objeto.colisiona(futuroPJ_x, pj_y, pj_ancho, pj_alto)) {
+                    colisionaEnX = true;
+                    break;
+                }
+            }
+
+            if (!colisionaEnX) {
+                pj_x = futuroPJ_x; // Mover solo si no hay colisión
+            }
+
+            // Manejar el salto y la caída
+            boolean sobreObjeto = false; // Variable para saber si el jugador está sobre un objeto
+            if (jumping) {
+                if (pj_y > jumpStartY - jumpHeight) {
+                    futuroPJ_y -= subirSpeed; // Subir
+                } else {
+                    jumping = false;
+                }
+            } else if (pj_y < ypiso) {
+                futuroPJ_y += fallSpeed; // Caer
+
+                // Verificar si el jugador está cayendo sobre un objeto
+                for (Objeto objeto : objetos) {
+                    if (objeto.colisiona(pj_x, futuroPJ_y, pj_ancho, pj_alto)) {
+                        // Verificar si el jugador está justo encima del objeto (colisión con la parte superior)
+                        if (pj_y + pj_alto <= objeto.y && futuroPJ_y + pj_alto >= objeto.y) {
+                            sobreObjeto = true;
+                            futuroPJ_y = objeto.y - pj_alto; // Ajustar la posición para estar justo encima del objeto
+                            onGround = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!sobreObjeto && futuroPJ_y >= ypiso) {
+                    futuroPJ_y = ypiso;
+                    onGround = true;
+                } else if (!sobreObjeto) {
+                    onGround = false;
+                }
+            }
+
+            // Verificar colisión en Y con todos los objetos
+            boolean colisionaEnY = false;
+            for (Objeto objeto : objetos) {
+                if (objeto.colisiona(pj_x, futuroPJ_y, pj_ancho, pj_alto)) {
+                    colisionaEnY = true;
+                    break;
+                }
+            }
+
+            if (!colisionaEnY) {
+                pj_y = futuroPJ_y; // Mover solo si no hay colisión
+            }
+        }
+
+        public void dibujarObjeto(Graphics2D g2d, int x, int y, int ancho, int alto, Color color) {
+            g2d.setColor(color);
+            g2d.fillRect(x, y, ancho, alto);
+        }
+    }
+}
