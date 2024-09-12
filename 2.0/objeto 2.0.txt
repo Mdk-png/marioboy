@@ -1,0 +1,33 @@
+package marioboy;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+
+    public class Objeto {
+        int x;
+        int y;
+        int ancho;
+        int alto;
+        Color color;
+
+        public Objeto(int x, int y, int ancho, int alto, Color color) {
+            this.x = x;
+            this.y = y;
+            this.ancho = ancho;
+            this.alto = alto;
+            this.color = color;
+        }
+
+        public void dibujar(Graphics2D g2d) {
+            g2d.setColor(color);
+            g2d.fillRect(x, y, ancho, alto);
+        }
+
+        public boolean colisiona(int x, int y, int ancho, int alto) {
+            // Verifica si hay una superposición entre el jugador y el objeto
+            return x < this.x + this.ancho &&
+                   x + ancho > this.x &&
+                   y < this.y + this.alto &&
+                   y + alto > this.y;
+        }
+    }

@@ -1,0 +1,36 @@
+package marioboy;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+
+public class ObjetoMovil extends Objeto {
+    private int velocidad;
+    private boolean moviendoDerecha;
+
+    public ObjetoMovil(int x, int y, int ancho, int alto, Color color, int velocidad) {
+        super(x, y, ancho, alto, color);
+        this.velocidad = velocidad;
+        this.moviendoDerecha = true;
+    }
+
+    public void mover() {
+        // Cambiar la dirección si se alcanza el borde de la pantalla
+        if (moviendoDerecha) {
+            x += velocidad;
+            if (x + ancho >= 1000) { // Limitar el movimiento hacia la derecha
+                moviendoDerecha = false;
+            }
+        } else {
+            x -= velocidad;
+            if (x <= 0) { // Limitar el movimiento hacia la izquierda
+                moviendoDerecha = true;
+            }
+        }
+    }
+
+    @Override
+    public void dibujar(Graphics2D g2d) {
+        g2d.setColor(color);
+        g2d.fillRect(x, y, ancho, alto);
+    }
+}
