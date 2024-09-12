@@ -81,9 +81,9 @@ public class marioboy extends JFrame {
         // Inicializar la lista de objetos
         objetos = new ArrayList<>();
         objetos.add(new Objeto(300, ypiso - 40, 100, 40, Color.GREEN)); // Primer objeto
-        objetos.add(new Objeto(500, ypiso - 70, 100, 40, Color.GREEN)); // Segundo objeto
-        objetos.add(new ObjetoMovil(700, ypiso - 40, 100, 40, Color.BLUE, 3)); // Primer objeto móvil
-        objetos.add(new ObjetoMovil(900, ypiso - 60, 150, 50, Color.YELLOW, 2)); // Segundo objeto móvil
+        objetos.add(new Objeto(500, ypiso - 100, 100, 40, Color.GREEN)); // Segundo objeto
+        objetos.add(new ObjetoMovil(700, ypiso - 200, 100, 15, Color.BLUE, 3, 330, 600)); // Primer objeto móvil con límites
+        objetos.add(new ObjetoMovil(900, ypiso - 150, 100, 20, Color.YELLOW, 2, 650, 850));
 
         // Temporizador
         timer = new Timer(16, new ActionListener() { // Aproximadamente 60 FPS
