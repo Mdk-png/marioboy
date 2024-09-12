@@ -1,0 +1,19 @@
+package marioboy;
+public class ObjetoMeta extends Objeto {
+
+    public ObjetoMeta(int x, int y, int ancho, int alto, Color color) {
+        super(x, y, ancho, alto, color);
+    }
+
+    @Override
+    public boolean colisiona(int x, int y, int ancho, int alto) {
+        // Si el jugador colisiona con el objeto meta, lo teletransporta al inicio
+        if (super.colisiona(x, y, ancho, alto)) {
+            marioboy.nivel++; // Aumenta el nivel
+            marioboy.pj_x = marioboy.inicio_pj_x; // Teletransporta al inicio
+            marioboy.pj_y = marioboy.inicio_pj_y;
+            return true;
+        }
+        return false;
+    }
+}

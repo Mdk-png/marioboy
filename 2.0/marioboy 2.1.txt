@@ -1,0 +1,318 @@
+package marioboy;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
+import java.util.ArrayList;
+import java.util.List;
+
+public class marioboy extends JFrame {
+
+    private JPanel contentPane;
+    private GamePanel gamePanel;
+
+    // PROPIEDADES DEL PJ
+    static int pj_x = 40; // UBICACION X
+    static int pj_y = 560; // UBICACION Y
+    static int inicio_pj_x = 40;
+    static int inicio_pj_y = 560;
+    int pj_ancho = 20;
+    int pj_alto = 40;
+    int ypiso = 560; // ubicacion del piso
+    boolean rPressed = false, spacePressed = false, sPressed = false, aPressed = false, dPressed = false;
+    int velMov = 5;
+    
+    int dashVel = 20; // Velocidad del dash
+    int dashDuration = 6; // Duración del dash en ticks
+    int dashTicks = 0;
+    int dashCooldown = 500; // Tiempo de cooldown en milisegundos
+    int dashCooldownTicks = 0; // Contador de cooldown
+    boolean hasDashed = false;
+    boolean canDashInAir = true; // Permitir dash en el aire
+    
+    boolean jumping = false;
+    boolean onGround = true;
+    int jumpHeight = 120; // Altura del salto
+    int fallSpeed = 12; // Velocidad de caída
+    int subirSpeed = 12;
+    int jumpStartY; // Y inicial del salto
+
+    // Nuevo color del jugador durante el dash
+    private Color dashColor = Color.RED;
+    private Color defaultColor = Color.CYAN;
+    
+    // Niveles
+    public static int nivel = 1;
+
+    // Temporizador para actualizar el movimiento del jugador
+    Timer timer;
+    
+    private List<Objeto> objetos;
+
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    marioboy frame = new marioboy();
+                    frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public marioboy() {
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(10, 10, 1000, 700);
+        setResizable(false);
+        gamePanel = new GamePanel();
+        gamePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        gamePanel.setLayout(new BorderLayout(0, 0));
+        setContentPane(gamePanel);
+
+        // Inicializar la lista de objetos
+        objetos = new ArrayList<>();
+        objetos.add(new Objeto(300, ypiso - 40, 100, 40, Color.GREEN)); //objeto fijo
+        objetos.add(new Objeto(500, ypiso - 70, 100, 40, Color.GREEN)); //objeto fijo
+        objetos.add(new ObjetoMovil(700, ypiso - 40, 100, 40, Color.BLUE, 3)); //objeto móvil
+        objetos.add(new ObjetoMovil(900, ypiso - 60, 150, 50, Color.YELLOW, 2)); //objeto móvil
+        objetos.add(new ObjetoMeta(800, ypiso - 70, 30, 50, Color.MAGENTA)); //Objeto que teletransporta
+        
+        // Temporizador
+        timer = new Timer(16, new ActionListener() { // Aproximadamente 60 FPS
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gamePanel.actionPerformed(e);
+                repaint();
+                if (dashCooldownTicks > 0) {
+                    dashCooldownTicks--; // Reducir el cooldown
+                }
+            }
+        });
+        timer.start();
+
+
+        // KeyListener
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int key = e.getKeyCode();
+                if (key == KeyEvent.VK_SPACE) {
+                    spacePressed = true;
+                    startJump();
+                }
+                if (key == KeyEvent.VK_S) {
+                    sPressed = true;
+                }
+                if (key == KeyEvent.VK_A) {
+                    aPressed = true;
+                }
+                if (key == KeyEvent.VK_D) {
+                    dPressed = true;
+                }
+                if (key == KeyEvent.VK_N) {
+                    dash();
+                }
+                if (key == KeyEvent.VK_R) {                	
+                	pj_y = inicio_pj_y;
+                	pj_x = inicio_pj_x;
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                int key = e.getKeyCode();
+                if (key == KeyEvent.VK_SPACE) {
+                    spacePressed = false;
+                }
+                if (key == KeyEvent.VK_S) {
+                    sPressed = false;
+                }
+                if (key == KeyEvent.VK_A) {
+                    aPressed = false;
+                }
+                if (key == KeyEvent.VK_D) {
+                    dPressed = false;
+                }
+            }
+        });
+        setFocusable(true);
+    }
+
+    private void startJump() {
+        if (onGround && !jumping) {
+            jumping = true;
+            onGround = false;
+            jumpStartY = pj_y;
+        }
+    }
+
+    private void dash() {
+        if (dashCooldownTicks <= 0 && !hasDashed && (onGround || canDashInAir)) {
+            dashTicks = dashDuration; // Iniciar dash
+            hasDashed = true; // Marcar como que se ha hecho el dash
+            dashCooldownTicks = dashCooldown / 16; // Establecer cooldown
+        }
+    }
+
+    private void performDash() {
+        if (dashTicks > 0) {
+            int dashX = 0;
+
+            // Determina la dirección del dash basado en las teclas presionadas
+            if (aPressed) {
+                dashX -= dashVel; // Dash a la izquierda
+            }
+            if (dPressed) {
+                dashX += dashVel; // Dash a la derecha
+            }
+
+            int futuroPJ_x = pj_x + dashX; // Calcula la posición futura en X
+
+            // Verifica la colisión en la nueva posición X
+            if (!checkCollision(futuroPJ_x, pj_y, pj_ancho, pj_alto)) {
+                pj_x = futuroPJ_x; // Actualiza la posición X solo si no hay colisión
+            }
+
+            dashTicks--; // Reduce el número de ticks restantes del dash
+            if (dashTicks <= 0) {
+                hasDashed = false; // Restablece la capacidad de dash al completar el dash
+            }
+        }
+    }
+
+
+    private boolean checkCollision(int x, int y, int ancho, int alto) {
+        for (Objeto objeto : objetos) {
+            if (objeto.colisiona(x, y, ancho, alto)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    class GamePanel extends JPanel {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+            
+            // Mostrar el nivel en pantalla
+            g2d.setColor(Color.BLACK);
+            g2d.drawString("Nivel: " + nivel, 20, 20);
+
+            // Determina el color del jugador
+            Color playerColor = hasDashed ? dashColor : defaultColor;
+
+            // Dibujar el jugador
+            g2d.setColor(playerColor);
+            g2d.fillRect(pj_x, pj_y, pj_ancho, pj_alto);
+
+            // Dibujar el piso
+            dibujarObjeto(g2d, 0, ypiso + 40, getWidth(), 200, Color.BLACK);
+
+            // Dibujar y mover los objetos del escenario
+            for (Objeto objeto : objetos) {
+                objeto.dibujar(g2d);
+                if (objeto instanceof ObjetoMovil) {
+                    ((ObjetoMovil) objeto).mover(); // Mover los objetos móviles
+                }
+            }
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            int futuroPJ_x = pj_x; // Posiciones futuras del jugador
+            int futuroPJ_y = pj_y;
+
+            if (!hasDashed) {
+                // Movimiento horizontal
+                if (dPressed && pj_x <= getWidth() - pj_ancho) {
+                    futuroPJ_x += velMov;
+                }
+                if (aPressed && pj_x >= 0) {
+                    futuroPJ_x -= velMov;
+                }
+
+                // Verificar colisión en X con todos los objetos
+                boolean colisionaEnX = false;
+                for (Objeto objeto : objetos) {
+                    if (objeto.colisiona(futuroPJ_x, pj_y, pj_ancho, pj_alto)) {
+                        colisionaEnX = true;
+                        break;
+                    }
+                }
+
+                if (!colisionaEnX) {
+                    pj_x = futuroPJ_x; // Mover en X solo si no hay colisión
+                }
+
+                // Movimiento vertical
+                if (jumping) {
+                    futuroPJ_y -= subirSpeed; // Subir mientras salta
+                    if (futuroPJ_y <= jumpStartY - jumpHeight) {
+                        jumping = false; // Alcanzó la altura máxima del salto
+                    }
+                    onGround = false;
+                } else {
+                    futuroPJ_y += fallSpeed; // Caída libre
+                    onGround = false;
+
+                    // Verificar colisión vertical con objetos
+                    boolean sobreObjeto = false;
+                    for (Objeto objeto : objetos) {
+                        if (objeto.colisiona(pj_x, futuroPJ_y, pj_ancho, pj_alto)) {
+                            if (pj_y + pj_alto <= objeto.y && futuroPJ_y + pj_alto >= objeto.y) { // Colisión desde arriba
+                                futuroPJ_y = objeto.y - pj_alto; // Ajustar la posición del jugador
+                                onGround = true; // Establecer que el jugador está en el suelo
+                                hasDashed = false; // Restablecer la capacidad de hacer dash
+                                sobreObjeto = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Si el jugador está cayendo y no está sobre ningún objeto, permitir que caiga hasta el suelo
+                    if (!sobreObjeto && futuroPJ_y >= ypiso) {
+                        futuroPJ_y = ypiso;
+                        onGround = true;
+                        hasDashed = false;
+                    }
+                }
+
+                // Verificar colisión en Y con todos los objetos
+                boolean colisionaEnY = false;
+                for (Objeto objeto : objetos) {
+                    if (objeto.colisiona(pj_x, futuroPJ_y, pj_ancho, pj_alto)) {
+                        colisionaEnY = true;
+                        break;
+                    }
+                }
+
+                if (!colisionaEnY) {
+                    pj_y = futuroPJ_y; // Mover en Y solo si no hay colisión
+                }
+            } else {
+                // Durante el dash, solo se actualiza la posición en X y se mantiene la Y constante
+                performDash();
+            }
+        }
+
+
+        public void dibujarObjeto(Graphics2D g2d, int x, int y, int ancho, int alto, Color color) {
+            g2d.setColor(color);
+            g2d.fillRect(x, y, ancho, alto);
+        }
+
+    }
+}
