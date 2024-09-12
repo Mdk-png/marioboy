@@ -6,23 +6,29 @@ import java.awt.Graphics2D;
 public class ObjetoMovil extends Objeto {
     private int velocidad;
     private boolean moviendoDerecha;
+    private int limiteIzquierdo;
+    private int limiteDerecho;
 
-    public ObjetoMovil(int x, int y, int ancho, int alto, Color color, int velocidad) {
+    // Constructor actualizado para aceptar los límites de movimiento
+    public ObjetoMovil(int x, int y, int ancho, int alto, Color color, int velocidad, int limiteIzquierdo, int limiteDerecho) {
         super(x, y, ancho, alto, color);
         this.velocidad = velocidad;
         this.moviendoDerecha = true;
+        this.limiteIzquierdo = limiteIzquierdo;
+        this.limiteDerecho = limiteDerecho;
     }
 
     public void mover() {
-        // Cambiar la dirección si se alcanza el borde de la pantalla
         if (moviendoDerecha) {
             x += velocidad;
-            if (x + ancho >= 1000) { // Limitar el movimiento hacia la derecha
+            if (x + ancho > limiteDerecho) { // Limitar el movimiento hacia la derecha
+                x = limiteDerecho - ancho; // Ajustar la posición para que no se salga del límite
                 moviendoDerecha = false;
             }
         } else {
             x -= velocidad;
-            if (x <= 0) { // Limitar el movimiento hacia la izquierda
+            if (x < limiteIzquierdo) { // Limitar el movimiento hacia la izquierda
+                x = limiteIzquierdo; // Ajustar la posición para que no se salga del límite
                 moviendoDerecha = true;
             }
         }
