@@ -1,0 +1,28 @@
+package marioboy;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+
+public class ObjetoMalo extends Objeto {
+
+    public ObjetoMalo(int x, int y, int ancho, int alto, Color black) {
+        super(x, y, ancho, alto, Color.BLACK); // Color rojo para el objeto
+    }
+    
+    @Override
+    public boolean colisiona(int x, int y, int ancho, int alto) {
+        // Si el jugador colisiona con el objeto meta, lo teletransporta al inicio
+        if (super.colisiona(x, y, ancho, alto)) {
+            marioboy.pj_x = marioboy.inicio_pj_x; // Teletransporta al inicio
+            marioboy.pj_y = marioboy.inicio_pj_y;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void dibujar(Graphics2D g2d) {
+        g2d.setColor(color);
+        g2d.fillRect(x, y, ancho, alto); // Dibuja el objeto
+    }
+}
