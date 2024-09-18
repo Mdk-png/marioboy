@@ -1,0 +1,12 @@
+//   x            y   ancho alto
+// (100, ypiso - 100, 100, 400, Color.black
+objetos.add(new Objeto(150, ypiso - 200, 100, 350, Color.black)); //plataforma grande
+objetos.add(new Objeto(650, ypiso - 200, 100, 350, Color.black)); //plataforma grande 2
+objetos.add(new Objeto(100, ypiso - 50, 100, 40, Color.black)); //primer escalon
+objetos.add(new Objeto(0, ypiso - 100, 64, 21, Color.black)); //segundo 
+objetos.add(new Objeto(100, ypiso - 170, 99, 10, Color.black)); //tercer escalon
+
+objetos.add(new Objeto(250, ypiso - 50, 55, 31, Color.black)); //4escalon
+objetos.add(new Objeto(250, ypiso - 150, 26, 90, Color.black)); //4escalon
+objetos.add(new ObjetoMovil(700, ypiso - 220, 101, 50, Color.BLUE, 2, 250, 600 )); //objeto móvil
+objetos.add(new ObjetoMeta(900, ypiso - 160, 32, 50, Color.MAGENTA)); 
