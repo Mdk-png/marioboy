@@ -1,0 +1,4 @@
+     objetos.add(new Objeto(170, ypiso - 50, 100, 40, Color.black)); 
+        objetos.add(new Objeto(320, ypiso - 100, 50, 40, Color.black));
+        objetos.add(new Objeto(420, ypiso - 150, 100, 40, Color.black)); 
+        objetos.add(new Objeto(600, ypiso - 200, 100, 300, Color.black)); 
