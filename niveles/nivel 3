@@ -9,6 +9,5 @@
         objetos.add(new Objeto(250, ypiso - 50, 50, 40, Color.black)); //4escalon
         objetos.add(new Objeto(250, ypiso - 150, 20, 40, Color.black)); //4escalon
         objetos.add(new ObjetoMovil(700, ypiso - 200, 100, 40, Color.BLUE, 2, 250, 600 )); //objeto móvil
-        objetos.add(new ObjetoMovil(900, ypiso - 600, 150, 50, Color.YELLOW, 2, 30, 200)); //objeto móvil
         objetos.add(new ObjetoMeta(900, ypiso - 10, 30, 50, Color.MAGENTA)); 
         
