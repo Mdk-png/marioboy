@@ -88,6 +88,7 @@ public class marioboy extends JFrame {
         objetos.add(new ObjetoMovil(700, ypiso - 40, 100, 40, Color.BLUE, 3)); //objeto móvil
         objetos.add(new ObjetoMovil(900, ypiso - 60, 150, 50, Color.YELLOW, 2)); //objeto móvil
         objetos.add(new ObjetoMeta(800, ypiso - 70, 30, 50, Color.MAGENTA)); //Objeto que teletransporta
+        objetos.add(new ObjetoMalo(600, ypiso - 30, 50, 20, Color.BLACK)); // Objeto que te mata
         
         // Temporizador
         timer = new Timer(16, new ActionListener() { // Aproximadamente 60 FPS
