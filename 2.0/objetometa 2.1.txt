@@ -1,0 +1,24 @@
+package marioboy;
+
+import java.awt.Color;
+
+public class ObjetoMeta extends Objeto {
+    private marioboy gameInstance; // Referencia a la instancia de marioboy
+
+    public ObjetoMeta(marioboy gameInstance, int x, int y, int ancho, int alto, Color color) {
+        super(x, y, ancho, alto, color);
+        this.gameInstance = gameInstance; // Asignar la referencia
+    }
+
+    @Override
+    public boolean colisiona(int x, int y, int ancho, int alto) {
+        if (super.colisiona(x, y, ancho, alto)) {
+            marioboy.nivel++; // Aumenta el nivel
+            marioboy.pj_x = marioboy.inicio_pj_x; // Teletransporta al inicio
+            marioboy.pj_y = marioboy.inicio_pj_y;
+            gameInstance.inicializarObjetos(); // Re-inicializar objetos según el nuevo nivel
+            return true;
+        }
+        return false;
+    }
+}
