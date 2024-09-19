@@ -93,14 +93,20 @@
             
             
         }
-        else if (nivel == 6) {        
-     pj_x = 40; // UBICACION X
-     pj_y = 560; // UBICACION Y
-              inicio_pj_x = 40;
-          inicio_pj_y = 560;
-
-            objetos.add(new Objeto(900, ypiso - 50, 30, 2, Color.black)); 
-      objetos.add(new ObjetoMeta(this,900, ypiso - 50, 30, 50, Color.MAGENTA)); 
+         else if (nivel == 6) {
+        	objetos.add(new Objeto(100, ypiso - 50, 100, 140, Color.black));
+        	objetos.add(new Objeto(200, ypiso - 100, 100, 170, Color.black));
+        	objetos.add(new Objeto(700, ypiso - 110, 100, 200, Color.black));
+        	objetos.add(new Objeto(370, ypiso - 100, 50, 20, Color.black));
+        	objetos.add(new Objeto(550, ypiso - 100, 50, 20, Color.black));
+        	objetos.add(new Objeto(935, ypiso - 200, 50, 20, Color.black));
+        	objetos.add(new Objeto(800, ypiso - 290, 50, 20, Color.black));
+        	objetos.add(new ObjetoMovil(760, ypiso - 300, 100, 40, Color.black, 2, 250, 700 ));
+        	objetos.add(new Objeto(100, ypiso - 300, 120, 40, Color.black));
+        	objetos.add(new ObjetoMeta(this,100, ypiso - 330, 30, 30, Color.MAGENTA));
+        	objetos.add(new ObjetoMalo(300, ypiso  + 40, 400, 10, Color.RED));
+        	objetos.add(new ObjetoMalo(800, ypiso  + 40, 200, 10, Color.RED));
+        	objetos.add(new Objeto(100, ypiso - 350, 30, 20, Color.magenta));
         }
         
     }
