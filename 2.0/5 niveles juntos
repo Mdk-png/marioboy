@@ -1,0 +1,58 @@
+        // Añadir objetos dependiendo del nivel
+        if (nivel == 0) {
+            objetos.add(new Objeto(300, ypiso - 50, 100, 40, Color.black)); 
+            objetos.add(new Objeto(450, ypiso - 100, 50, 40, Color.black));
+            objetos.add(new Objeto(550, ypiso - 50, 100, 40, Color.black));
+      objetos.add(new ObjetoMeta(this,900, ypiso - 10, 30, 50, Color.MAGENTA)); 
+        
+        } else if (nivel == 2) {
+            objetos.add(new Objeto(170, ypiso - 50, 100, 40, Color.black)); 
+            objetos.add(new Objeto(320, ypiso - 100, 50, 40, Color.black));
+            objetos.add(new Objeto(420, ypiso - 150, 100, 40, Color.black)); 
+            objetos.add(new Objeto(600, ypiso - 200, 100, 300, Color.black)); 
+        objetos.add(new ObjetoMeta(this,900, ypiso - 10, 30, 50, Color.MAGENTA)); 
+        
+        
+        
+        }
+        else if (nivel == 3) {
+        	   objetos.add(new Objeto(100, ypiso - 50, 100, 200, Color.black)); 
+               objetos.add(new Objeto(250, ypiso - 100, 50, 40, Color.black)); 
+               objetos.add(new Objeto(500, ypiso - 100, 100, 200, Color.black)); 
+               objetos.add(new Objeto(700, ypiso - 50, 100, 200, Color.black)); 
+
+               objetos.add(new Objeto(900, ypiso - 60, 30, 20, Color.black)); 
+         objetos.add(new ObjetoMeta(this, 900, ypiso - 10, 30, 50, Color.MAGENTA)); 
+               
+        
+        
+        }
+        else if (nivel == 1) {
+            //   x            y   ancho alto
+            // (100, ypiso - 100, 100, 400, Color.black
+            objetos.add(new Objeto(150, ypiso - 200, 100, 350, Color.black)); //plataforma grande
+            objetos.add(new Objeto(650, ypiso - 200, 100, 350, Color.black)); //plataforma grande 2
+            objetos.add(new Objeto(100, ypiso - 50, 100, 40, Color.black)); //primer escalon
+            objetos.add(new Objeto(0, ypiso - 100, 50, 40, Color.black)); //segundo 
+            objetos.add(new Objeto(100, ypiso - 170, 100, 40, Color.black)); //tercer escalon
+
+            objetos.add(new Objeto(250, ypiso - 50, 50, 40, Color.black)); //4escalon
+            objetos.add(new Objeto(250, ypiso - 150, 20, 40, Color.black)); //4escalon
+            objetos.add(new ObjetoMovil(700, ypiso - 200, 100, 40, Color.BLUE, 2, 250, 600 )); //objeto móvil
+            objetos.add(new ObjetoMeta(this, 900, ypiso - 10, 30, 50, Color.MAGENTA)); 
+            
+            
+            
+        }
+        else if (nivel == 5) {
+            
+            
+            
+        }
+        else if (nivel == 6) {
+            
+            
+            
+        }
+        
+    }
