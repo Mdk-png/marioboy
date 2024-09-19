@@ -1,0 +1,8 @@
+//meta y techo
+  objetos.add(new Objeto(900, ypiso - 10, 30, 2, Color.black));
+  objetos.add(new ObjetoMeta(this, 900, ypiso - 10, 30, 50, Color.MAGENTA)); 
+  //bordes 
+  objetos.add(new Objeto(-1, ypiso - 900, 1, 1000, Color.black)); //paredes
+        	objetos.add(new Objeto(999, ypiso - 900, 5, 1000, Color.black)); 
+            
+            
