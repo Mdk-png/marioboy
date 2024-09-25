@@ -358,13 +358,22 @@ public class marioboy extends JFrame {
     void inicializarTextos() {
         textos.clear();
 
-        if (nivel == 1) {
+         if (nivel == 1) {
             textos.add(new Texto("TUTORIAL", getWidth() / 2 - 90, 60, 30, Color.BLACK));
             textos.add(new Texto("A izquierda", getWidth() / 2 - 70, 100, 20, Color.BLACK));
             textos.add(new Texto("D derecha", getWidth() / 2 - 70, 140, 20, Color.BLACK));
             textos.add(new Texto("ESPACIO saltar", getWidth() / 2 - 90, 180, 20, Color.BLACK));
+            textos.add(new Texto("El objeto violeta te teletransporta al siguiente nivel", getWidth() / 2 - 230, 220, 20, Color.BLACK));
         } else if (nivel == 2) {
-            textos.add(new Texto("MAS DIFICIL!!!", 20, 60, 24, Color.BLACK));
+            textos.add(new Texto("TUTORIAL", getWidth() / 2 - 90, 60, 30, Color.BLACK));
+            textos.add(new Texto("R reiniciar nivel", getWidth() / 2 - 85, 100, 20, Color.BLACK));       
+        } else if (nivel == 3) {
+            textos.add(new Texto("TUTORIAL", getWidth() / 2 - 90, 60, 30, Color.BLACK));
+            textos.add(new Texto("N dash", getWidth() / 2 - 50, 100, 20, Color.BLACK));
+            textos.add(new Texto("R reiniciar nivel", getWidth() / 2 - 70, 140, 20, Color.BLACK));
+        } else if (nivel == 4) {
+        	textos.add(new Texto("TUTORIAL", getWidth() / 2 - 90, 60, 30, Color.BLACK));
+            textos.add(new Texto("Los objetos azules se mueven", getWidth() / 2 - 150, 100, 20, Color.BLACK));
         }
     }
 
