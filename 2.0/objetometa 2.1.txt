@@ -17,6 +17,7 @@ public class ObjetoMeta extends Objeto {
             marioboy.pj_x = marioboy.inicio_pj_x; // Teletransporta al inicio
             marioboy.pj_y = marioboy.inicio_pj_y;
             gameInstance.inicializarObjetos(); // Re-inicializar objetos según el nuevo nivel
+            gameInstance.inicializarTexto();
             return true;
         }
         return false;
